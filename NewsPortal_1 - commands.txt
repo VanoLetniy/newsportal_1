@@ -1,0 +1,119 @@
+from NewsPortal.models import * 
+
+user1 = User.objects.create_user('Иван')
+user1.save()
+
+user2 = User.objects.create_user('Андрей')
+user2.save()
+
+author1 = Author.objects.create(user=user1) 
+author1.save()   
+
+author2 = Author.objects.create(user=user2) 
+author2.save()                              
+
+category1 = Category.objects.create(name='Погода')      
+category1.save()    
+
+category2 = Category.objects.create(name='Спорт')    
+category2.save()                                  
+
+category3 = Category.objects.create(name='Медицина') 
+category3.save()                                     
+
+category4 = Category.objects.create(name='Наука')    
+category4.save()
+
+post1 = Post.objects.create(article=False, author=author1, name='Лечение от рака', text='Учёные нашли новый способ лечения от рака. Чтобы вылечиться надо всего лишь')
+post1.save()  
+                                                                                                                               
+
+post2 = Post.objects.create(article=False, author=author2, name='Космические путешествия', text='Чтобы перемещаться между звёздами нужно построить хороший космический корабль')  
+post2.save()                                                                                                                                 
+
+post3 = Post.objects.create(article=True, author=author1, name='Илон Маск побывал в России', text='Илон Маск побывал в городе Электроугли в Московской области и был в шоке от увиденных технологий') 
+post3.save()
+
+post1.category.add(category3, category4)
+post1.save()    
+
+post2.category.add(category4)  
+post2.save()            
+
+post3.category.add(category4) 
+post3.save()
+                                                                                                                    
+comment1 = Comment.objects.create(post=post1, user=user1, author=author1, text= 'Очень здорово! Учёные молодцы')                                             
+comment1.save()                                                                                  
+
+comment2 = Comment.objects.create(post=post1, user=user2, author=author1, text= 'Очердное враньё, рак не лечится') 
+comment2.save()                                                                                    
+
+comment3 = Comment.objects.create(post=post2, user=user1, author=author2, text= 'Круто! Я бы полетел в другую галактику') 
+comment3.save()                                                                                           
+
+comment4 = Comment.objects.create(post=post2, user=user2, author=author2, text= 'Автор жжёт!!!')                              
+comment4.save()                                                              
+
+comment5 = Comment.objects.create(post=post3, user=user2, author=author1, text= 'Пусть на электричках местных покатается, там технологии ещё лучше') 
+comment5.save()   
+
+post1.like()  
+post1.save()
+
+post2.dislike()     
+post2.save() 
+
+post3.like() 
+post3.save()   
+
+comment1.like() 
+comment1.save() 
+
+comment2.dislike() 
+comment2.save()    
+
+comment3.dislike() 
+comment3.save()     
+
+comment4.dislike() 
+comment4.save()     
+
+comment5.like()
+comment5.save()
+
+author1.update_rating()
+author1.save()
+
+author2.update_rating()
+author2.save()
+
+best_author = Author.objects.order_by('-rating').first()
+user = best_author.user
+rating = best_author.rating
+print(f"Лучший пользователь: {user}, Рейтинг: {rating}")
+
+best_post = Post.objects.order_by('-rating').first()
+date_added = best_post.time_add
+username = best_post.author.user
+rating = best_post.author.rating
+title = best_post.name
+preview = best_post.preview()
+
+print(f"Дата добавления: {date_added}")
+print(f"Автор: {user}")
+print(f"Рейтинг автора: {rating}")
+print(f"Заголовок: {title}")
+print(f"Превью: {preview}")
+
+comments = Comment.objects.filter(post=best_post)
+for comment in comments:
+	date_added = comment.time_add
+	username = comment.author.user
+	rating = comment.rating
+	text = comment.text
+    
+	print(f"Дата: {date_added}")
+	print(f"Пользователь: {username}")
+	print(f"Рейтинг: {rating}")
+	print(f"Текст: {text}")
